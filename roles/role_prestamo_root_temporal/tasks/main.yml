@@ -6,12 +6,8 @@
 
     - set_fact:
         runplaybook: |
-          {% if actions in ['Prestamo de password roots'] and sistemaos in ['redhat', 'suse', 'aix', 'solaris'] and entorno in 'EP' %}
-          ['s0chkidhelix','s1chkcandadosu']
-          {% elif actions in ['Prestamo de password roots'] and sistemaos in ['redhat', 'suse', 'aix', 'solaris'] and entorno in 'PR' %}
-          ['s98msgerramb']
-          {% elif actions in ['Barredora prestamo de password roots'] %}
-          ['s9chkbarradorasu']
+          {% if actions in ['Barredora prestamo de password roots'] %}
+          ['s0genpwdrdmsu','s1chkbarradorasu']
           {% else %}
           ['No selecciono ninguna tarea', 'No_selecciono_ninguna_tarea']
           {% endif %}
