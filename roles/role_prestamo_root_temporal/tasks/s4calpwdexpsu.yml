@@ -1,0 +1,30 @@
+---
+- block:
+    - name: Calcular y formatear fechas de expiracion
+      set_fact:
+        fechaexphumana: >-
+          {{ 
+            '%d-%m-%Y %H:%M:%S' | strftime((ansible_date_time.epoch | int) + 
+            (tiempoexpiracionhrs | int * 3600)) 
+          }}
+        fechaexplinux: >-
+          {{
+            (ansible_date_time.epoch | int) + 
+            (tiempoexpiracionhrs | int * (3600 if tipoexpiracion == 'horas' else 86400))
+          }}
+        fechaexpaix: >-
+          {{
+            '%m%d%H%M%y' | strftime(
+              (ansible_date_time.epoch | int) + 
+              (tiempoexpiracionhrs | int * (3600 if tipoexpiracion == 'horas' else 86400))
+            )
+          }}
+        fechaexpsolaris: >-
+          {{
+            '%Y-%m-%d' | strftime(
+              (ansible_date_time.epoch | int) + 
+              (tiempoexpiracionhrs | int * (3600 if tipoexpiracion == 'horas' else 86400))
+            )
+          }}
+  delegate_to: "{{ servidorautomation }}"
+  run_once: true

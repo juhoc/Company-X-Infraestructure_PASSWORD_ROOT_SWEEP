@@ -1,0 +1,59 @@
+---
+- block:
+    # - name: Generar reporte HTML de Certificación CFS
+    #   template:
+    #     src: templates/certificacion_cfs_report.html.j2
+    #     dest: "/tmp/certificacion_cfs_{{ inventory_hostname }}.html"
+    #   delegate_to: localhost
+    #   become: false
+
+    - name: Crear directorio de reporte_consolidado NetBackup CFS
+      file:
+        path: "{{ rutareporte }}"
+        mode: " 0755"
+        owner: "bvmuxat2"
+        group: "bvmuxat2"
+        state: "directory"
+
+    - name: Generar Reporte Consolidado HTML para todos los nodos
+      template:
+        src: templates/consolidated_cfs_report.html.j2
+        dest: "{{ rutareporte }}reporte_{{ idhelix }}_consolidado_cfs_{{ ansible_date_time.date }}.html"
+      # delegate_to: localhost
+      # run_once: true
+      # become: false
+
+    - name: Leer Reporte Consolidado HTML para todos los nodos
+      shell: "cat {{ rutareporte }}reporte_{{ idhelix }}_consolidado_cfs_{{ ansible_date_time.date }}.html"
+      register: htmlrepotr
+
+    - set_fact:
+        htmlrepotsf: "{{ htmlrepotr.stdout_lines }}"
+
+    - name: Enviar correo único con el Reporte Ejecutivo Consolidado
+      community.general.mail:
+        host: "{{ smtp_server }}"
+        port: "{{ smtp_port }}"
+        from: "{{ email_sender }}"
+        to: "{{ email_recipients }}"
+        cc: "{{ email_copy if email_copy | length > 0 else omit }}"
+        subject: "[RESUMEN EJECUTIVO] Certificación NetBackup CFS - ({{ hostvars[ansible_play_hosts[0]]['ansible_date_time']['date'] }})"
+        body: "{{ htmlrepotsf | join('\n') }}"
+#        body: "{{ lookup('file', '{{ rutareporte }}reporte_{{ idhelix }}_consolidado_cfs_{{ ansible_date_time.date }}.html') }}"
+        subtype: html
+      # delegate_to: localhost
+      # run_once: true
+      # become: true
+
+  delegate_to: "{{ srv_delegate }}"
+  run_once: true
+  become: true
+
+
+- block:
+    - copy:
+        content: "{{ htmlrepotsf | join('\n') }}"
+        dest: "{{ rutareporte }}reporte_{{ idhelix }}_consolidado_cfs_{{ ansible_date_time.date }}.html"
+  run_once: true
+  delegate_to: "{{ srv_delegate }}"
+        

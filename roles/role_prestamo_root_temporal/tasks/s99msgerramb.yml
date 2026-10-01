@@ -1,0 +1,15 @@
+---
+- block:
+    - name: Existe archivo candado para no cambar el password al super usuario root
+      set_fact:
+        candadostado: 'EXISTECANDO'
+        cadadomemsg: >-
+          {% if vigenciacandado | default(false) | bool %}
+          [BLOQUEADO] {{ nombreservidor }} ya esta prestado a {{ inforcandado.usuario_solicitante }} hasta {{ inforcandado.fecha_expiracion_humana }}.
+          {% else %}
+          [DISPONIBLE] {{ nombreservidor }} libre para nuevo prestamo de root.
+          {% endif %}
+
+    - name: Notificar estado del candado del servidor
+      debug:
+        msg: "{{ cadadomemsg }}"

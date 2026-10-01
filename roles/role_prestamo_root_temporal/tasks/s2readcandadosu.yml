@@ -1,0 +1,22 @@
+---
+- block:
+    - name: Leer informacion del candado si existe
+      slurp:
+        src: "{{ directoriocandado }}/{{ nombreservidor }}.json"
+      register: contarchjson
+
+    - name: Parsear datos del candado
+      set_fact:
+        leercandado: "{{ contarchjson.content | b64decode | from_json }}"
+
+    - name: Determinar si el candado sigue vigente
+      set_fact:
+        vigenciacandado: >-
+          {{ 
+            existearchcandado.stat.exists and 
+            ((ansible_date_time.epoch | int) < (leercandado.fecha_expiracion_epoch | int)) 
+          }}
+        inforcandado: "{{ leercandado | default({}) }}"
+  no_log: true
+  become: true
+  delegate_to: "{{ servidorautomation }}"

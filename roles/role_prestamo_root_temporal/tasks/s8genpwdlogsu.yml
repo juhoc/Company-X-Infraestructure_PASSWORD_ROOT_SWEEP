@@ -1,0 +1,23 @@
+---
+- block:
+    - name: Registrar cambio en log centralizado (Nodo de control)
+      become: true
+      lineinfile:
+        path: "{{ directoriologs }}/prestamoroot-{{ ansible_date_time.date }}.log"
+        line: "ID_Helix: {{ idhelix }},Usuario_solicitante: {{ tower_user_name | default('automationcenter') }},Fecha_Aplicacion: {{ fechahoraactual }},Host: {{ nombreservidor }},Password: {{ claveplana }},Expira_password_root: {{ fechaexphumana }}"
+        create: yes
+        mode: '0600'
+      delegate_to: "{{ servidorseguro }}"
+      throttle: 1
+      when: not (vigenciacandado | default(false) | bool)
+
+# ---
+# - block:
+#     - name: Registrar cambio en log centralizado (Nodo de control)
+#       become: true
+#       lineinfile:
+#         path: "{{ directoriologs }}/prestamoroot-{{ ansible_date_time.iso8601 }}.log"
+#         line: "ID_Helix: {{ idhelix }} | Usuario_solicitante: {{ tower_user_name | default('automationcenter') }} | Fecha_Aplicacion: {{ ansible_date_time.iso8601 }} | Host: {{ inventory_hostname }} | Password: {{ claveplana }} | Expira_password_root: {{ fechaexphumana }}"
+#         create: yes
+#         mode: '0600'
+#   delegate_to: "{{ servidorseguro }}"

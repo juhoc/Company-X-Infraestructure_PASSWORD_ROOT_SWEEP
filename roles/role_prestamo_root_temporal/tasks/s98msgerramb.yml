@@ -1,0 +1,10 @@
+---
+- block:
+    - name: No aplica prestamo de root por el entono
+      set_fact:
+        prestamoroot: 'ERRORENTONO'
+        prestamorootmsg: "[ENTORNO] No es posible cambiar el password al servidor {{ nombreservidor }}, es entono - Producción."
+
+    - name: Notificar ambiente del servidor
+      debug:
+        msg: "{{ prestamorootmsg }}"

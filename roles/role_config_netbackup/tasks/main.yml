@@ -1,0 +1,31 @@
+---
+- name: PlayBook - Configuracion Clientes NetBackup
+  block:
+    - set_fact:
+        run_playbook: |
+          {% if action == 'Configurar_NetBackup' %}
+          ['s0chkidhelix','s0preflight','s1chknbfileversion']
+          {% else %}
+          ['No_selecciono_ninguna_tarea']
+          {% endif %}
+    
+    - name: Condicion de tareas Clientes NetBackup
+      become: true
+      assert:
+        that:
+          - "'No_selecciono_ninguna_tarea' not in run_playbook"
+        fail_msg: "run_playbook"
+        success_msg: "Ha seleccionado la tarea: {{ action }}"
+      run_once: true
+      delegate_to: localhost
+    
+    - name: La(s) tarea(s) seleccionar es {{ run_playbook }}
+      include_tasks: "{{ asbpbact }}.yml"
+      loop: "{{ run_playbook }}"
+      loop_control:
+        loop_var: asbpbact
+      when: hostvars[inventory_hostname].get('cfs_status', 'OK') != 'ERROR'
+
+    - name: Generar Reporte Final
+      include_tasks: s19nbconfrepo.yml
+      when: action == 'Configurar_NetBackup'

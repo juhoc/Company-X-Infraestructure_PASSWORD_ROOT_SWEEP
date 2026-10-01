@@ -1,0 +1,6 @@
+---
+- block:
+    - name: Aplicar expiracion de root en Solaris
+      become: true
+      shell: >
+         passwd -x {{ tiempoexpiraciondia }} {{ superuser }}

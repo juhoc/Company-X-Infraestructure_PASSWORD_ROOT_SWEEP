@@ -1,0 +1,7 @@
+---
+- block:
+    - name: Actualizar contraseña de root en Solaris
+      become: true
+      shell: |
+        usermod -p "{{ clavecifrada }}" root
+  no_log: true

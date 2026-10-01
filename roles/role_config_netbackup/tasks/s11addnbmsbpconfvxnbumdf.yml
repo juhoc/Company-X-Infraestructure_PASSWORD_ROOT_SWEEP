@@ -1,0 +1,21 @@
+---
+- block:
+    - name: Agregar Servidores CFS al inicio de /usr/openv/netbackup/bp.conf
+      blockinfile:
+        path: /usr/openv/netbackup/bp.conf
+        insertbefore: BOF
+        marker: "# {mark} ANSIBLE MANAGED CFS SERVERS"
+        block: |
+          SERVER = vxnbumdf
+          SERVER = cbnbumedia6-le
+          SERVER = cpdnbumedia4-le
+          SERVER = lopahcrespmx03_mdf
+      register: bp_conf_update
+
+    - name: Configurar CLIENT_NAME en /usr/openv/netbackup/bp.conf
+      lineinfile:
+        path: /usr/openv/netbackup/bp.conf
+        regexp: '^CLIENT_NAME\s*='
+        line: "CLIENT_NAME = {{ nbcltsfx }}"
+        state: present
+  become: true

@@ -1,0 +1,10 @@
+---
+- block:
+    - name: Cambiar password de root y configurar expiración
+      become: true
+      user:
+        name: "{{ superuser }}"
+        password: "{{ clavecifrada }}"
+        update_password: always
+  no_log: true
+  when: not (vigenciacandado | default(false) | bool)

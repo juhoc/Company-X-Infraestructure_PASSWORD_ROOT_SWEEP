@@ -1,0 +1,7 @@
+---
+- block:
+    - name: Actualizar contraseña de root en AIX
+      become: true
+      shell: |
+        echo "root:{{ claveplana }}" | chpasswd -c
+  no_log: true

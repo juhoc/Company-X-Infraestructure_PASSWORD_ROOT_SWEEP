@@ -1,0 +1,13 @@
+---
+- block:
+    - name: Generar password aleatorio seguro (Una sola vez para todos los hosts)
+      shell: "{{ clavealeatoria }}"
+      register: clvtxtpln
+      changed_when: false
+
+    - name: Guardar password en texto plano y cifrado
+      set_fact:
+        claveplana: "{{ clvtxtpln.stdout }}"
+        clavecifrada: "{{ clvtxtpln.stdout | password_hash('sha512') }}"
+  delegate_to: "{{ servidorautomation }}"
+  run_once: true

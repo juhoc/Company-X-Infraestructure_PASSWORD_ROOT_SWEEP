@@ -1,0 +1,7 @@
+- block:
+    - name: Aplicar expiracion del password root en Linux
+      become: true
+      user:
+        name: "{{ superuser }}"
+        password_expire_max: "{{ tiempoexpiraciondia }}"
+        expires: -1

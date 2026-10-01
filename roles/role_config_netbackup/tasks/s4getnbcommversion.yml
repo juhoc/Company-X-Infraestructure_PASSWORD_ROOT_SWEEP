@@ -1,0 +1,20 @@
+---
+- block:
+    - name: Obtener version comando NetBackup
+      shell: "nbgetconfig | {{ nbparamcm }}"
+      register: nbchkcv
+      args:
+        chdir: "{{ nbbin }}"
+      environment:
+        PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/openv/netbackup/bin:{{ ansible_env.PATH }}"
+      changed_when: false
+  become: true
+
+- name: Formatear versión de NetBackup
+  set_fact:
+    nbversion: "{{ nbchkcv.stdout | trim }}"
+
+- name: Evaluar si requiere gestión de certificados (Versión >= 8.0)
+  set_fact:
+    applies_certs: "{{ nbversion is version('8.0', '>=') }}"
+

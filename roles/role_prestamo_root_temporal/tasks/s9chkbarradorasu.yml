@@ -1,0 +1,28 @@
+---
+- block:
+    - name: Obtener fecha actual del servidor
+      set_fact:
+        fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+
+    - name: Buscar archivos json que contienen la fecha actual
+      become: true
+      ansible.builtin.command: "grep -rl {{ fechactualphumana }} {{ directoriocandado }}"
+      register: archjsonexp
+      failed_when: archjsonexp.rc > 1
+      changed_when: false
+
+    - name: Lista de archivos json a borrar
+      set_fact:
+        archjsonexpdel: "{{ archjsonexp.stdout_lines }}"
+
+    - name: Mostrar archivos a eliminar
+      debug:
+        var: archjsonexpdel
+
+    - name: Eliminar archivos encontrados
+      become: true
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ archjsonexpdel }}"
+      when: archjsonexpdel | length > 0

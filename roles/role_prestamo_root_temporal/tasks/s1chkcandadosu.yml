@@ -1,0 +1,66 @@
+---
+- block:
+    - name: Comprobar si existe archivo de candado
+      stat:
+        path: "{{ directoriocandado }}/{{ nombreservidor }}.json"
+      register: existearchcandado
+  delegate_to: "{{ servidorautomation }}"
+
+- name: Leer informacion del candado si existe para evaluar vigencia
+  include_tasks: s2readcandadosu.yml
+  when: existearchcandado.stat.exists
+
+- block:
+    - name: Condicion para validar el prestamo de roots
+      set_fact:
+        runplaybook: |
+          {% if not existearchcandado.stat.exists or not (vigenciacandado | default(false) | bool) %}
+          ['s3genpwdrdmsu','s4calpwdexpsu','s5setpwd{{ plataforma }}su','s6setpwdexp{{ plataforma }}su','s7setcandadosu','s8genpwdlogsu']
+          {% else %}
+          ['s99msgerramb']
+          {% endif %}
+
+    - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
+      include_tasks: "{{ asbpbact1 }}.yml"
+      loop: "{{ runplaybook }}"
+      loop_control:
+        loop_var: asbpbact1
+
+# ---
+# - block:
+#     - name: Comprobar si existe archivo de candado
+#       stat:
+#         path: "{{ directoriocandado }}/{{ inventory_hostname }}.json"
+#       register: existearchcandado
+
+#     - name: Leer informacion del candado si existe
+#       slurp:
+#         src: "{{ directoriocandado }}/{{ inventory_hostname }}.json"
+#       register: osvcontarch
+#       when: existearchcandado.stat.exists
+#   become: true
+#   delegate_to: "{{ servidorautomation }}"
+
+# - block:
+#     - name: Parsear datos del candado
+#       set_fact:
+#         leercandado: "{{ osvcontarch.content | b64decode | from_json }}"
+#       when: existearchcandado.stat.exists
+
+#     - name: Determinar si el candado sigue vigente
+#       set_fact:
+#         vigenciacandado: >-
+#           {{ 
+#             existearchcandado.stat.exists and 
+#             ((ansible_date_time.epoch | int) < (leercandado.fecha_expiracion_epoch | int)) 
+#           }}
+#         inforcandado: "{{ leercandado | default({}) }}"
+
+#     - name: Log local del estado del host
+#       debug:
+#         msg: >-
+#           {% if vigenciacandado | default(false) | bool %}
+#           [BLOQUEADO] {{ inventory_hostname }} ya prestado a {{ inforcandado.usuario_solicitante }} hasta {{ inforcandado.fecha_expiracion_humana }}.
+#           {% else %}
+#           [DISPONIBLE] {{ inventory_hostname }} libre para nuevo prestamo.
+#           {% endif %}
