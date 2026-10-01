@@ -7,4 +7,3 @@
         expires: -1
         password_expire_max: -1
         password_expire_min: 0
-        inactive: -1
