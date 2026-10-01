@@ -1,9 +1,0 @@
----
-- name: PlayBook Maestro - Prestamo temporal del password de root
-  hosts: all
-  gather_facts: true
-#  strategy: serial
-
-  tasks:
-    - include_role:
-        name: role_prestamo_root_temporal
