@@ -3,7 +3,7 @@
     - name: No aplica borrado de archivos json roots
       set_fact:
         borrararchroot: 'PREVENTIVO'
-        borrararchrootmsg: "[PREVENTIVO] ❌ Para la opcion -Barredora prestamo de password roots- solo ingrese en el limite el servidor {{ servidorautomationcorto }}.*"
+        borrararchrootmsg: "[PREVENTIVO] ⚠️ Para la opcion -Barredora prestamo de password roots- solo ingrese en el limite el servidor {{ servidorautomationcorto }}.*"
 
     - name: Notificar mensaje de borrado de archivos json roots
       debug:
