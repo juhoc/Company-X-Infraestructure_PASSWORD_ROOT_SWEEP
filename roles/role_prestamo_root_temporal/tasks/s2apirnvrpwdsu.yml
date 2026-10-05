@@ -8,7 +8,7 @@
         status_code: [200, 201, 204, 400]
         method: POST
         headers:
-          Authorization: "Bearer {{ tower_token }}"
+          Authorization: "Bearer {{ towertoken }}"
           Content-Type: "application/json"
         body_format: json
         body:
