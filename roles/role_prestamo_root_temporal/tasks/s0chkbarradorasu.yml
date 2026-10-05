@@ -1,42 +1,111 @@
 ---
-- block:
-    - name: Obtener fecha actual del servidor
-      set_fact:
-        fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+- name: Bloque de evaluación nativa de candados por Epoch
+  block:
+    - name: 1. Buscar todos los archivos de candado .json
+      ansible.builtin.find:
+        paths: "{{ directoriocandado }}"
+        patterns: "*.json"
+      register: candados_encontrados
+      delegate_to: "{{ servidorautomation }}"
+      run_once: true
 
-    - name: Obtener fecha actual del servidor
-      set_fact:
-        fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+    - name: 2. Leer contenido de los candados existentes
+      ansible.builtin.slurp:
+        src: "{{ item.path }}"
+      loop: "{{ candados_encontrados.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+      register: candados_slurped
+      when: candados_encontrados.matched > 0
+      delegate_to: "{{ servidorautomation }}"
+      run_once: true
 
-    - name: Buscar archivos json que contienen la fecha actual de expiracion
-      become: true
-      shell: "grep -rl {{ fechactualphumana }} /var/opt/ansible/candado"
-      register: archjsonexp
-      failed_when: archjsonexp.rc > 1
-      changed_when: false
+    - name: 3. Filtrar archivos y hosts cuya fecha de expiracion se ha cumplido (Epoch)
+      vars:
+        epoch_actual: "{{ ansible_date_time.epoch | int }}"
+      ansible.builtin.set_fact:
+        # Lista de rutas absolutas de archivos que ya vencieron (para borrarlos después)
+        archjsonexpdel: >-
+          [
+            {% for item in (candados_slurped.results | default([])) if item.content is defined %}
+              {% set data = item.content | b64decode | from_json %}
+              {% if (data.fecha_expiracion_epoch | default(0) | int) <= epoch_actual %}
+                "{{ item.source }}",
+              {% endif %}
+            {% endfor %}
+          ]
+        # Cadena formateada para el limit de AWX: 'server1.* server2.*'
+        archjsonhtsdel: >-
+          {{
+            candados_slurped.results | default([])
+            | selectattr('content', 'defined')
+            | map(attribute='content')
+            | map('b64decode')
+            | map('from_json')
+            | selectattr('fecha_expiracion_epoch', 'defined')
+            | selectattr('fecha_expiracion_epoch', 'le', epoch_actual)
+            | map(attribute='host')
+            | unique
+            | map('regex_replace', '^(.*)$', '\\1.*')
+            | join(' ')
+          }}
+      run_once: true
 
-    - name: Buscar equipos en archivos json que contienen la fecha actual de expiracion
-      become: true
-      shell: "grep -rlE {{ fechactualphumana }} | sort -rn | uniq | sed 's|.json|.*|g' | xargs"
-      args:
-        chdir: /var/opt/ansible/candado
-      register: archjsonhost
-      failed_when: archjsonhost.rc > 1
-      changed_when: false
+    - name: 4. Definir enrutamiento según existencia de candados expirados
+      ansible.builtin.set_fact:
+        runplaybook: >-
+          {{
+            ['s2apirnvrpwdsu', 's1borrajsonexp']
+            if (archjsonexpdel | length > 0)
+            else ['s90msgprespwdsu']
+          }}
+      run_once: true
 
-    - set_fact:
-        runplaybook: |
-          {% if archjsonexp.rc == 0 %}
-          ['s1borrajsonexp','s2apirnvrpwdsu']
-          {% else %}
-          ['s90msgprespwdsu']
-          {% endif %}
-
-    - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
-      include_tasks: "{{ asbpbact1 }}.yml"
+    - name: 5. Ejecutar flujo determinado
+      ansible.builtin.include_tasks: "{{ asbpbact1 }}.yml"
       loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact1
+      run_once: true
+
+# - block:
+#     - name: Obtener fecha actual del servidor
+#       set_fact:
+#         fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+
+#     - name: Obtener fecha actual del servidor
+#       set_fact:
+#         fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+
+#     - name: Buscar archivos json que contienen la fecha actual de expiracion
+#       become: true
+#       shell: "grep -rl {{ fechactualphumana }} /var/opt/ansible/candado"
+#       register: archjsonexp
+#       failed_when: archjsonexp.rc > 1
+#       changed_when: false
+
+#     - name: Buscar equipos en archivos json que contienen la fecha actual de expiracion
+#       become: true
+#       shell: "grep -rlE {{ fechactualphumana }} | sort -rn | uniq | sed 's|.json|.*|g' | xargs"
+#       args:
+#         chdir: /var/opt/ansible/candado
+#       register: archjsonhost
+#       failed_when: archjsonhost.rc > 1
+#       changed_when: false
+
+#     - set_fact:
+#         runplaybook: |
+#           {% if archjsonexp.rc == 0 %}
+#           ['s1borrajsonexp','s2apirnvrpwdsu']
+#           {% else %}
+#           ['s90msgprespwdsu']
+#           {% endif %}
+
+#     - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
+#       include_tasks: "{{ asbpbact1 }}.yml"
+#       loop: "{{ runplaybook }}"
+#       loop_control:
+#         loop_var: asbpbact1
 
     # - name: Lista de archivos json a borrar
     #   set_fact:
