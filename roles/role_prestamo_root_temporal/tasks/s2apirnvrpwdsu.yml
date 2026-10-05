@@ -1,1 +1,22 @@
 ---
+- block:
+    - name: Ejecutar plantilla renovacion de roots 
+      uri:
+        url: "{{ tower_base_url }}/api/v2/job_templates/{{ tower_job_id }}/launch/"
+        validate_certs: false
+        force_basic_auth: true
+        status_code: [200, 201, 204, 400]
+        method: POST
+        headers:
+          Authorization: "Bearer {{ tower_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          inventory: 2
+          credentials: [6]
+          limit: "{{ vmname }}.*"
+          extra_vars:
+            '{ "idcrqincreq": "{{ accionjtp1.idcrqincreq | tr bim }}", }'
+      register: lanzar_plantilla
+  delegate_to: localhost
+  run_once: false
