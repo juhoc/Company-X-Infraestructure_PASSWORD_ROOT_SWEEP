@@ -3,7 +3,7 @@
     - name: No aplica borrado de archivos json roots
       set_fact:
         borrararchroot: 'MENSAJE'
-        borrararchrootmsg: "[MENSAJE] Sin archivos json para borrar y renovar password root para servidores ambiente - Entorno Previo"
+        borrararchrootmsg: "[MENSAJE] ☑️ Sin archivos json para borrar y renovar password root para servidores ambiente - Entorno Previo"
 
     - name: Notificar mensaje de borrado de archivos json roots
       debug:
