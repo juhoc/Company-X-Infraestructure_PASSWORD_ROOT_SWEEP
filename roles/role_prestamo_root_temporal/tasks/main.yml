@@ -2,8 +2,12 @@
 - name: PlayBook - Prestano de root temporal
   block:
 
+    -name: Validando debug
+     debug:
+      name: "{{ ansible_play_hosts }}"
+
     - set_fact:
-        runplaybook: |
+        runplaybook: >-
           {% if actions == 'Barredora prestamo de password roots' and 'lcmasb4gmx100' in ansible_play_hosts %}
           ['s0chkbarradorasu']
           {% elif actions == 'Barredora prestamo de password roots' and 'lcmasb4gmx100' not in ansible_play_hosts %}
