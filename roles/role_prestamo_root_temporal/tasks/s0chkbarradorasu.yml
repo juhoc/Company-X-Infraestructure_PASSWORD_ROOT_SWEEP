@@ -29,7 +29,7 @@
           {% if archjsonexp.rc == 0 %}
           ['s1borrajsonexp','s2apirnvrpwdsu']
           {% else %}
-          ['s90msgnoarchjson']
+          ['s90msgprespwdsu']
           {% endif %}
 
     - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
