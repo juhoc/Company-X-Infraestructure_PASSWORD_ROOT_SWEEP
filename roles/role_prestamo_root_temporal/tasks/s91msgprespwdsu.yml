@@ -1,0 +1,10 @@
+---
+- block:
+    - name: No aplica borrado de archivos json roots
+      set_fact:
+        borrararchroot: 'PREVENTIVO'
+        borrararchrootmsg: "[PREVENTIVO] Para la opcion -Barredora prestamo de password roots- solo ingrese en e limite es servidor lvmasb4gmx100.*"
+
+    - name: Notificar mensaje de borrado de archivos json roots
+      debug:
+        msg: "{{ borrararchrootmsg }}"
