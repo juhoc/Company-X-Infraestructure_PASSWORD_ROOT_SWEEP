@@ -33,8 +33,8 @@
           {% endif %}
 
     - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
-      include_tasks: "{{ asbpbact }}.yml"
-      loop: "{{ runplaybook1 }}"
+      include_tasks: "{{ asbpbact1 }}.yml"
+      loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact1
 
