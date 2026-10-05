@@ -4,25 +4,47 @@
       set_fact:
         fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
 
-    - name: Buscar archivos json que contienen la fecha actual
+    - name: Obtener fecha actual del servidor
+      set_fact:
+        fechactualphumana: "{{ now(fmt='%d-%m-%Y') }}"
+
+    - name: Buscar archivos json que contienen la fecha actual de expiracion
       become: true
-      ansible.builtin.command: "grep -rl {{ fechactualphumana }} {{ directoriocandado }}"
+      shell: "grep -rl {{ fechactualphumana }} /var/opt/ansible/candado"
       register: archjsonexp
       failed_when: archjsonexp.rc > 1
       changed_when: false
 
-    - name: Lista de archivos json a borrar
-      set_fact:
-        archjsonexpdel: "{{ archjsonexp.stdout_lines }}"
-
-    - name: Mostrar archivos a eliminar
-      debug:
-        var: archjsonexpdel
-
-    - name: Eliminar archivos encontrados
+    - name: Buscar equipos en archivos json que contienen la fecha actual de expiracion
       become: true
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop: "{{ archjsonexpdel }}"
-      when: archjsonexpdel | length > 0
+      shell: "grep -rlE {{ fechactualphumana }} | sort -rn | uniq | sed 's|.json|.*|g' | xargs"
+      args:
+        chdir: /var/opt/ansible/candado
+      register: archjsonhost
+      failed_when: archjsonhost.rc > 1
+      changed_when: false
+
+    - set_fact:
+        runplaybook: |
+          {% if archjsonexp.rc == 0 %}
+          borrar_regitros_json-renovar_root
+          {% else %}
+          nada_que_hacer
+          {% endif %}
+
+    # - name: Lista de archivos json a borrar
+    #   set_fact:
+    #     archjsonexpdel: "{{ archjsonexp.stdout_lines }}"
+
+    # - name: Lista de archivos json a borrar
+    #   set_fact:
+    #     archjsonexpdel: "{{ archjsonexp.stdout_lines }}"
+
+    # - name: Eliminar archivos encontrados
+    #   become: true
+    #   file:
+    #     path: "{{ item }}"
+    #     state: absent
+    #   loop: "{{ archjsonexpdel }}"
+    #   when: archjsonexpdel | length > 0
+

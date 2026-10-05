@@ -1,4 +1,5 @@
 ---
+idplantilla: "19"
 fechahoraactual: "{{ now(fmt='%d-%m-%Y %H:%M:%S') }}"
 nombreservidor: "{{ inventory_hostname.split('.')[0] }}"
 direccionip: "{{ hostvars[inventory_hostname]['ipaddress'] }}"
