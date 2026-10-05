@@ -4,7 +4,7 @@
 
     -name: Validando debug
      debug:
-      name: "{{ ansible_play_hosts }}"
+       msg: "{{ ansible_play_hosts }}"
 
     - set_fact:
         runplaybook: >-
