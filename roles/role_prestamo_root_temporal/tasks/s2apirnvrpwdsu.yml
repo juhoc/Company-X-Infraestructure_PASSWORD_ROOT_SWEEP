@@ -18,22 +18,20 @@
           extra_vars:
             actions: "{{ accion }}"
       register: lanzar_plantilla
-  delegate_to: localhost
-  run_once: false
 
-   - name: Valida la ejecucion de la plantilla renovacio de roots
-     uri:
-       url: "{{lanzar_plantilla.location}}"
-       validate_certs: no
-       force_basic_auth: yes
-       method: GET
-       headers:
-         Authorization: Bearer {{ tower_token }}
-       status_code: 200, 201, 204
-     register: trabajos_aap
-     until: trabajos_aap.json.status == 'successful' or trabajos_aap.json.status == 'failed' or trabajos_aap.json.status == 'canceled' or trabajos_aap.json.status == 'error' 
-     failed_when: trabajos_aap.json.status == 'failed' or trabajos_aap.json.status == 'canceled'
-     delay: "{{ delay }}"
-     retries: "{{ retries }}"
+    - name: Valida la ejecucion de la plantilla renovacio de roots
+      uri:
+        url: "{{lanzar_plantilla.location}}"
+        validate_certs: no
+        force_basic_auth: yes
+        method: GET
+        headers:
+          Authorization: Bearer {{ tower_token }}
+        status_code: 200, 201, 204
+      register: trabajos_aap
+      until: trabajos_aap.json.status == 'successful' or trabajos_aap.json.status == 'failed' or trabajos_aap.json.status == 'canceled' or trabajos_aap.json.status == 'error' 
+      failed_when: trabajos_aap.json.status == 'failed' or trabajos_aap.json.status == 'canceled'
+      delay: "{{ delay }}"
+      retries: "{{ retries }}"
   ignore_errors: true
   delegate_to: localhost
