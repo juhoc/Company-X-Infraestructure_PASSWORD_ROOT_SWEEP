@@ -1,25 +1,19 @@
 ---
 - block:
-    - name: Lista de archivos json expirar para borrar
-      set_fact:
-        archjsonexpdel: "{{ archjsonexp.stdout_lines }}"
-
-    - name: Lista de servidores en json para borrar
-      set_fact:
-        archjsonhtsdel: "{{ archjsonhost.stdout }}"
-
     - name: Mostrar archivos a eliminar
       debug:
         var: archjsonexpdel
 
-    - name: Mostrar archivos a eliminar
+    - name: Mostrar servidores cuyos roots se renovaron
       debug:
         var: archjsonhtsdel
 
-    - name: Eliminar archivos encontrados
+    - name: Eliminar archivos de candado expirados
       become: true
       file:
         path: "{{ item }}"
         state: absent
       loop: "{{ archjsonexpdel }}"
       when: archjsonexpdel | length > 0
+      delegate_to: "{{ servidorautomation }}"
+      run_once: true

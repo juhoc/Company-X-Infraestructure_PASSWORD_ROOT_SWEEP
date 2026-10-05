@@ -6,7 +6,7 @@
         paths: "{{ directoriocandado }}"
         patterns: "*.json"
       register: candados_encontrados
-      delegate_to: "{{ servidorautomation }}"
+#      delegate_to: "{{ servidorautomation }}"
       run_once: true
 
     - name: 2. Leer contenido de los candados existentes
@@ -17,7 +17,7 @@
         label: "{{ item.path | basename }}"
       register: candados_slurped
       when: candados_encontrados.matched > 0
-      delegate_to: "{{ servidorautomation }}"
+#      delegate_to: "{{ servidorautomation }}"
       run_once: true
 
     - name: 3. Filtrar archivos y hosts cuya fecha de expiracion se ha cumplido (Epoch)
@@ -29,7 +29,7 @@
           [
             {% for item in (candados_slurped.results | default([])) if item.content is defined %}
               {% set data = item.content | b64decode | from_json %}
-              {% if (data.fecha_expiracion_epoch | default(0) | int) <= epoch_actual %}
+              {% if (data.fecha_expiracion_epoch | default(0) | int) <= (epoch_actual | int) %}
                 "{{ item.source }}",
               {% endif %}
             {% endfor %}
@@ -43,10 +43,10 @@
             | map('b64decode')
             | map('from_json')
             | selectattr('fecha_expiracion_epoch', 'defined')
-            | selectattr('fecha_expiracion_epoch', 'le', epoch_actual)
+            | selectattr('fecha_expiracion_epoch', 'le', (epoch_actual | int))
             | map(attribute='host')
             | unique
-            | map('regex_replace', '^(.*)$', '\\1.*')
+            | map('regex_replace', '$', '.*')
             | join(' ')
           }}
       run_once: true
