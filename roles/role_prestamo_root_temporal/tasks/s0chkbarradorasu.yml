@@ -34,9 +34,9 @@
 
     - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
       include_tasks: "{{ asbpbact }}.yml"
-      loop: "{{ runplaybook }}"
+      loop: "{{ runplaybook1 }}"
       loop_control:
-        loop_var: asbpbact
+        loop_var: asbpbact1
 
     # - name: Lista de archivos json a borrar
     #   set_fact:
