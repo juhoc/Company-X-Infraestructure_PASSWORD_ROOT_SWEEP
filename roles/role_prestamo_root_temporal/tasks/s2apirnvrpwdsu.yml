@@ -35,3 +35,4 @@
       retries: "{{ retries }}"
   ignore_errors: true
   delegate_to: localhost
+  run_once: true
