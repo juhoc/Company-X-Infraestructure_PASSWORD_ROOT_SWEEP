@@ -26,7 +26,7 @@
         force_basic_auth: yes
         method: GET
         headers:
-          Authorization: Bearer {{ tower_token }}
+          Authorization: "Bearer {{ towertoken }}"
         status_code: 200, 201, 204
       register: trabajos_aap
       until: trabajos_aap.json.status == 'successful' or trabajos_aap.json.status == 'failed' or trabajos_aap.json.status == 'canceled' or trabajos_aap.json.status == 'error' 
