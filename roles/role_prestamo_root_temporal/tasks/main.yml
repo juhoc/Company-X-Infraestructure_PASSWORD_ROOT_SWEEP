@@ -1,11 +1,6 @@
 ---
 - name: PlayBook - Prestano de root temporal
   block:
-
-    -name: Validando debug
-     debug:
-       msg: "{{ ansible_play_hosts }}"
-
     - set_fact:
         runplaybook: >-
           {% if actions == 'Barredora prestamo de password roots' and 'lcmasb4gmx100' in ansible_play_hosts %}
@@ -18,6 +13,10 @@
           ['No selecciono ninguna tarea', 'No_selecciono_ninguna_tarea']
           {% endif %}
     
+    - name: Validar variable ansible
+      debug:
+        msg: "{{ ansible_play_hosts }}"    
+
     - name: Condicion de tareas borrar password root
       become: true
       assert:
