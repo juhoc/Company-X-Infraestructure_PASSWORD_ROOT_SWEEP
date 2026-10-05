@@ -27,10 +27,16 @@
     - set_fact:
         runplaybook: |
           {% if archjsonexp.rc == 0 %}
-          borrar_regitros_json-renovar_root
+          ['s1borrajsonexp']
           {% else %}
-          nada_que_hacer
+          ['s90msgnoarchjson']
           {% endif %}
+
+    - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
+      include_tasks: "{{ asbpbact }}.yml"
+      loop: "{{ runplaybook }}"
+      loop_control:
+        loop_var: asbpbact
 
     # - name: Lista de archivos json a borrar
     #   set_fact:

@@ -1,30 +1,27 @@
 ---
 - name: PlayBook - Prestano de root temporal
   block:
-    # - name: Cargar variables de entorno
-    #   include_vars: "vars/vars-{{ entorno.lower() }}.yml"
 
     - set_fact:
         runplaybook: |
           {% if actions in ['Barredora prestamo de password roots'] %}
-          ['s1chkbarradorasu']
+          ['s0chkbarradorasu']
           {% else %}
           ['No selecciono ninguna tarea', 'No_selecciono_ninguna_tarea']
           {% endif %}
     
-    # - name: Condicion de tareas generar password root
-    #   become: true
-    #   assert:
-    #     that:
-    #       - "'No_selecciono_ninguna_tarea' not in runplaybook"
-    #     fail_msg: "runplaybook"
-    #     success_msg: "Ha seleccionado la tarea: {{ actions }}"
-    #   run_once: true
-    #   delegate_to: localhost
+    - name: Condicion de tareas borrar password root
+      become: true
+      assert:
+        that:
+          - "'No_selecciono_ninguna_tarea' not in runplaybook"
+        fail_msg: "runplaybook"
+        success_msg: "Ha seleccionado la tarea: {{ actions }}"
+      run_once: true
+      delegate_to: localhost
     
-    - name: Ejecutar tareas Tickt Helix y Generar password root aleatoreo unificado  
+    - name: Validar condicion para borrar archivos json exprirados 
       include_tasks: "{{ asbpbact }}.yml"
       loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact
-
