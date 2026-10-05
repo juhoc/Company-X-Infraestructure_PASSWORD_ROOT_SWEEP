@@ -1,10 +1,6 @@
 ---
 - name: PlayBook - Prestano de root temporal
   block:
-    - name: Validar variable ansible
-      debug:
-        msg: "{{ ansible_play_hosts }}"
-
     - set_fact:
         runplaybook: |
           {% if actions == 'Barredora prestamo de password roots' and '{{ servidorautomation }}' in ansible_play_hosts %}
