@@ -4,9 +4,9 @@
 
     - set_fact:
         runplaybook: |
-          {% if actions in ['Barredora prestamo de password roots'] and ansible_play_hosts in lcmasb4gmx100 %}
+          {% if actions in ['Barredora prestamo de password roots'] and 'lcmasb4gmx100' in ansible_play_hosts %}
           ['s0chkbarradorasu']
-          {% elif actions in ['Barredora prestamo de password roots'] and ansible_play_hosts not in lcmasb4gmx100 %}
+          {% elif actions in ['Barredora prestamo de password roots'] and 'lcmasb4gmx100' not in ansible_play_hosts %}
           ['s91msgprespwdsu']
           {% elif actions in ['Renovar password root'] %}
           ['s1apirnvrpwdsu']
