@@ -1,6 +1,0 @@
----
-- block:
-    - name: Aplicar expiracion de root en AIX
-      become: true
-      shell: >
-         chuser maxage={{ tiempoexpiraciondia }} {{ superuser }}

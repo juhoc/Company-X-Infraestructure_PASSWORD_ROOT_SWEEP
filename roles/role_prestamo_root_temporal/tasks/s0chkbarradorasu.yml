@@ -27,7 +27,7 @@
     - set_fact:
         runplaybook: |
           {% if archjsonexp.rc == 0 %}
-          ['s1borrajsonexp']
+          ['s1borrajsonexp','s2apirnvrpwdsu']
           {% else %}
           ['s90msgnoarchjson']
           {% endif %}
