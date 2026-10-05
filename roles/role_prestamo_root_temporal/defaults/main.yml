@@ -3,6 +3,8 @@ towerbaseurlapi: "http://192.168.49.2:30203/api/v2/job_templates/"
 idplantilla: "19"
 accion: "Renovar password root"
 towertoken: "{{ lookup('env','TOWER_OAUTH_TOKEN') }}"
+retries: 150
+delay: 2
 fechahoraactual: "{{ now(fmt='%d-%m-%Y %H:%M:%S') }}"
 nombreservidor: "{{ inventory_hostname.split('.')[0] }}"
 direccionip: "{{ hostvars[inventory_hostname]['ipaddress'] }}"
