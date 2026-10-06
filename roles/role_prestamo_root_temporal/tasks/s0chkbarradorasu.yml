@@ -1,30 +1,27 @@
 ---
 - name: Bloque de evaluación nativa de candados por Epoch
   block:
-    - name: 1. Buscar todos los archivos de candado .json
-      ansible.builtin.find:
+    - name: Buscar todos los archivos de candado .json
+      find:
         paths: "{{ directoriocandado }}"
         patterns: "*.json"
       register: candados_encontrados
-#      delegate_to: "{{ servidorautomation }}"
-      run_once: true
+#      run_once: true
 
-    - name: 2. Leer contenido de los candados existentes
-      ansible.builtin.slurp:
+    - name: Leer contenido de los candados existentes
+      slurp:
         src: "{{ item.path }}"
       loop: "{{ candados_encontrados.files }}"
       loop_control:
         label: "{{ item.path | basename }}"
       register: candados_slurped
       when: candados_encontrados.matched > 0
-#      delegate_to: "{{ servidorautomation }}"
-      run_once: true
+#      run_once: true
 
-    - name: 3. Filtrar archivos y hosts cuya fecha de expiracion se ha cumplido (Epoch)
+    - name: Filtrar archivos y hosts cuya fecha de expiracion se ha cumplido (Epoch)
       vars:
         epoch_actual: "{{ ansible_date_time.epoch | int }}"
-      ansible.builtin.set_fact:
-        # Lista de rutas absolutas de archivos que ya vencieron (para borrarlos después)
+      set_fact:
         archjsonexpdel: >-
           [
             {% for item in (candados_slurped.results | default([])) if item.content is defined %}
@@ -34,7 +31,6 @@
               {% endif %}
             {% endfor %}
           ]
-        # Cadena formateada para el limit de AWX: 'server1.* server2.*'
         archjsonhtsdel: >-
           {{
             candados_slurped.results | default([])
@@ -49,24 +45,33 @@
             | map('regex_replace', '$', '.*')
             | join(' ')
           }}
-      run_once: true
+#      run_once: true
 
-    - name: 4. Definir enrutamiento según existencia de candados expirados
-      ansible.builtin.set_fact:
-        runplaybook: >-
-          {{
-            ['s2apirnvrpwdsu', 's1borrajsonexp']
-            if (archjsonexpdel | length > 0)
-            else ['s90msgprespwdsu']
-          }}
-      run_once: true
+    # - name: Definir enrutamiento según existencia de candados expirados
+    #   set_fact:
+    #     runplaybook: >-
+    #       {{
+    #         ['s2apirnvrpwdsu', 's1borrajsonexp']
+    #         if (archjsonexpdel | length > 0)
+    #         else ['s90msgprespwdsu']
+    #       }}
+    #   run_once: true
 
-    - name: 5. Ejecutar flujo determinado
-      ansible.builtin.include_tasks: "{{ asbpbact1 }}.yml"
+    - name: Definir enrutamiento según existencia de candados expirados
+      set_fact:
+        runplaybook: |
+          {% if (archjsonexpdel | length > 0) %}
+          ['s2apirnvrpwdsu','s1borrajsonexp']
+          {% else %}
+          ['s90msgprespwdsu']
+          {% endif %}
+
+    - name: Ejecutar flujo determinado
+      include_tasks: "{{ asbpbact1 }}.yml"
       loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact1
-      run_once: true
+#      run_once: true
 
 # - block:
 #     - name: Obtener fecha actual del servidor

@@ -28,3 +28,12 @@
       loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact
+
+    - name: Definir enrutamiento según existencia de candados expirados
+      set_fact:
+        runplaybook: |
+          {% if (archjsonexpdel | length > 0) %}
+          se_envia_correo
+          {% else %}
+          ['s90msgprespwdsu']
+          {% endif %}
