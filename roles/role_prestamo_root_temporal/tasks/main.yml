@@ -35,5 +35,5 @@
           {% if (archjsonexpdel | length > 0) %}
           se_envia_correo
           {% else %}
-          ['s90msgprespwdsu']
+          no_hay_arcnivos_json
           {% endif %}
