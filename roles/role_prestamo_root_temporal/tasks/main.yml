@@ -28,20 +28,3 @@
       loop: "{{ runplaybook }}"
       loop_control:
         loop_var: asbpbact
-
-    # - name: Definir enrutamiento según existencia de candados expirados
-    #   set_fact:
-    #     runplaybook: |
-    #       {% if (archjsonexpdel | length > 0) %}
-    #       ['s10sendmailpwdsu']
-    #       {% else %}
-    #       ['s90msgprespwdsu']
-    #       {% endif %}
-
-    # - name: Validar condicion para borrar archivos json exprirados 
-    #   include_tasks: "{{ asbpbact2 }}.yml"
-    #   loop: "{{ runplaybook }}"
-    #   loop_control:
-    #     loop_var: asbpbact2
-    #   run_once: true
-    #   delegate_to: localhost
