@@ -10,7 +10,7 @@
         host: 192.168.0.245
         port: 25
         from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
-        subject: "[Entrega Automatica de Roots] Parte A de Credencial Root"
+        subject: "[Renovación Automatica de Roots] Parte A de Credencial Root"
 #        to: "{{ to }}"
         cc: "{{ emailcc }}"
         subtype: html
@@ -27,7 +27,7 @@
         host: 192.168.0.245
         port: 25
         from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
-        subject: "[Entrega Automatica de Roots] Parte B de Credencial Root"
+        subject: "[Renovación Automatica de Roots] Parte B de Credencial Root"
 #        to: "{{ to }}"
         cc: "{{ emailcc }}"
         subtype: html
