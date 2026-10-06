@@ -47,21 +47,21 @@
   delegate_to: "{{ servidorautomation }}"
   run_once: true
 
-# - block:
-#     - name: Mostrar archivos a eliminar
-#       debug:
-#         var: archjsonexpdel
+- block:
+    - name: Mostrar archivos a eliminar
+      debug:
+        var: archjsonexpdel
 
-#     - name: Mostrar servidores cuyos roots se renovaron
-#       debug:
-#         var: archjsonhtsdel
+    - name: Mostrar servidores cuyos roots se renovaron
+      debug:
+        var: archjsonhtsdel
 
-#     - name: Eliminar archivos de candado expirados
-#       become: true
-#       file:
-#         path: "{{ item }}"
-#         state: absent
-#       loop: "{{ archjsonexpdel }}"
-#       when: archjsonexpdel | length > 0
-#   delegate_to: "{{ servidorautomation }}"
-#   run_once: true
+    - name: Eliminar archivos de candado expirados
+      become: true
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ archjsonexpdel }}"
+      when: archjsonexpdel | length > 0
+  delegate_to: "{{ servidorautomation }}"
+  run_once: true

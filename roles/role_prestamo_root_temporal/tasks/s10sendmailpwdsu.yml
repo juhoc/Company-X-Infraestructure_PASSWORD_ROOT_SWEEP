@@ -11,7 +11,8 @@
         port: 25
         from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
         subject: "[Entrega Automatica de Roots] Parte A de Credencial Root"
-        to: "{{ to }}"
+#        to: "{{ to }}"
+        cc: "{{ emailcc }}"
         subtype: html
         charset: utf8
         body: "{{ lookup('template', 'entrega_de_root_lado_a.html.j2') }}"
@@ -27,7 +28,8 @@
         port: 25
         from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
         subject: "[Entrega Automatica de Roots] Parte B de Credencial Root"
-        to: "{{ to }}"
+#        to: "{{ to }}"
+        cc: "{{ emailcc }}"
         subtype: html
         charset: utf8
         body: "{{ lookup('template', 'entrega_de_root_lado_b.html.j2') }}"
