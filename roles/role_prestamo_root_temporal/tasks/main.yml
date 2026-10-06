@@ -8,7 +8,7 @@
           {% elif actions == 'Barredora prestamo de password roots' and servidorautomation not in ansible_play_hosts %}
           ['s91msgprespwdsu']
           {% elif actions in ['Renovar password root'] %}
-          ['s3genpwdrdmsu','s4setpwd{{ plataforma }}su','s1borrajsonexp']
+          ['s3genpwdrdmsu','s4setpwd{{ plataforma }}su','s1borrajsonexp','s9genreppwdsu']
           {% else %}
           ['No selecciono ninguna tarea', 'No_selecciono_ninguna_tarea']
           {% endif %}
@@ -29,17 +29,19 @@
       loop_control:
         loop_var: asbpbact
 
-    - name: Definir enrutamiento según existencia de candados expirados
-      set_fact:
-        runplaybook: |
-          {% if (archjsonexpdel | length > 0) %}
-          ['s9genreppwdsu']
-          {% else %}
-          ['s90msgprespwdsu']
-          {% endif %}
+    # - name: Definir enrutamiento según existencia de candados expirados
+    #   set_fact:
+    #     runplaybook: |
+    #       {% if (archjsonexpdel | length > 0) %}
+    #       ['s10sendmailpwdsu']
+    #       {% else %}
+    #       ['s90msgprespwdsu']
+    #       {% endif %}
 
-    - name: Validar condicion para borrar archivos json exprirados 
-      include_tasks: "{{ asbpbact2 }}.yml"
-      loop: "{{ runplaybook }}"
-      loop_control:
-        loop_var: asbpbact2
+    # - name: Validar condicion para borrar archivos json exprirados 
+    #   include_tasks: "{{ asbpbact2 }}.yml"
+    #   loop: "{{ runplaybook }}"
+    #   loop_control:
+    #     loop_var: asbpbact2
+    #   run_once: true
+    #   delegate_to: localhost
