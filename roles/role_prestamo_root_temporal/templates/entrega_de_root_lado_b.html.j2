@@ -1,0 +1,182 @@
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+
+<body style="margin:0; padding:0; background-color:#f3f6fb; font-family:Segoe UI, Arial, sans-serif; color:#1f2937;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f6fb; padding:24px 0;">
+<tr>
+<td align="center">
+
+<table width="900" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:14px; overflow:hidden; border:1px solid #d9e2ef;">
+
+  <!-- HEADER -->
+  <tr>
+    <td style="background-color:#043263; padding:26px 32px; color:#ffffff;">
+      <div style="font-size:24px; font-weight:700;">
+        Entrega Automática de Credencial Root
+      </div>
+      <div style="font-size:14px; margin-top:6px; color:#dbeafe;">
+        Ansible Automation Platform
+      </div>
+    </td>
+  </tr>
+
+<!-- MENSAJE -->
+<tr>
+  <td style="padding:24px 32px;">
+
+    <p style="margin:0; font-size:14px; line-height:1.6;">
+      La solicitud de acceso fue procesada exitosamente.
+      <b>Este mensaje contiene la Parte B de la contraseña temporal.</b>
+      La Parte A fue enviada en un correo separado.
+    </p>
+
+  </td>
+</tr>
+
+<!-- PASSWORD -->
+<tr>
+  <td style="padding:0 32px 32px 32px;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+    style="background:#16a34a; border-radius:12px;">
+
+      <tr>
+        <td style="padding:20px; text-align:center; color:#ffffff;">
+
+          <div style="font-size:14px; font-weight:600;">
+            Contraseña Root Temporal LADO B
+          </div>
+
+          <div style="
+            margin-top:12px;
+            background:#ffffff;
+            padding:14px;
+            border-radius:8px;
+            display:inline-block;
+            min-width:300px;
+            text-align:center;
+            user-select:all;
+            -webkit-user-select:all;
+            -moz-user-select:all;
+          ">
+
+            <span style="
+              color:transparent;
+              font-size:28px;
+              font-weight:700;
+              letter-spacing:2px;
+              font-family:Consolas, monospace;
+              user-select:all;
+              -webkit-user-select:all;
+              -moz-user-select:all;
+            ">
+              {{ clave_parte_b }}
+            </span>
+
+          </div>
+
+          <div style="
+            margin-top:12px;
+            font-size:14px;
+            font-weight:600;
+            color:#dcfce7;
+            text-align:center;
+          ">
+            📋 Seleccione y copie el contenido del área blanca para obtener la contraseña temporal.
+          </div>
+
+        </td>
+      </tr>
+
+    </table>
+
+  </td>
+</tr>
+
+  <!-- DATOS -->
+  <tr>
+    <td style="padding:0 32px 24px 32px;">
+
+      <table width="100%" cellpadding="10" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr>
+  <td style="background:#f8fafc; font-weight:bold; width:30%; vertical-align:top;">
+    Equipos Solicitados
+  </td>
+  <td style="border-bottom:1px solid #e5e7eb;">
+
+    {% for host in ansible_play_hosts %}
+    <div>
+      <b>{{ host.split('.')[0] }}</b> - {{ hostvars[host]['ipaddress'] }}
+    </div>
+    {% endfor %}
+
+  </td>
+</tr>
+        <tr>
+          <td style="background:#f8fafc; font-weight:bold;">
+            Entorno
+          </td>
+          <td style="border-bottom:1px solid #e5e7eb;">
+            {{ hostvars[inventory_hostname]['entorno'] }}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background:#f8fafc; font-weight:bold;">
+            Solicitante
+          </td>
+          <td style="border-bottom:1px solid #e5e7eb;">
+            {{ tower_user_email }}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background:#f8fafc; font-weight:bold;">
+            CRQ
+          </td>
+          <td style="border-bottom:1px solid #e5e7eb;">
+            {{ idcrqinc }}
+          </td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+  
+  <!-- AVISO -->
+  <tr>
+    <td style="padding:0 32px 24px 32px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+      style="background:#fff7ed; border:1px solid #fdba74; border-radius:10px;">
+
+        <tr>
+          <td style="padding:16px; color:#9a3412; font-size:14px;">
+            <b>Importante:</b> Esta contraseña es temporal y expirará el
+            <b>{{ fechaexphumana }}</b>. No compartir esta información con personal no autorizado.
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="background-color:#f8fafc; padding:18px 32px; color:#64748b; font-size:12px; border-top:1px solid #e5e7eb;">
+      Correo generado automáticamente desde Ansible Automation Platform.<br>
+      La credencial fue creada de acuerdo con el proceso autorizado de acceso privilegiado.
+    </td>
+  </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

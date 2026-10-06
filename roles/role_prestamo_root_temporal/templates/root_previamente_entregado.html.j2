@@ -1,0 +1,170 @@
+<br>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<br>
+<body style="margin:0; padding:0; background-color:#f3f6fb; font-family:Segoe UI, Arial, sans-serif; color:#1f2937;">
+<br>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f6fb; padding:24px 0;">
+<tr>
+<td align="center">
+<br>
+<table width="900" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:14px; overflow:hidden; border:1px solid #d9e2ef;">
+<br>
+  <!-- HEADER -->
+  <tr>
+    <td style="background-color:#043263; padding:26px 32px; color:#ffffff;">
+      <div style="font-size:24px; font-weight:700;">
+        Solicitud de Credencial Root
+      </div>
+      <div style="font-size:14px; margin-top:6px; color:#dbeafe;">
+        Ansible Automation Platform
+      </div>
+    </td>
+  </tr>
+<br>
+<!-- MENSAJE PRINCIPAL -->
+<tr>
+  <td style="padding:14px 32px 18px 32px; text-align:center;">
+
+    <div style="max-width:700px; margin:0 auto; font-size:14px; line-height:1.6;">
+      La solicitud fue procesada correctamente, sin embargo no se generó una nueva credencial Root.
+      El acceso para el equipo solicitado ya fue entregado previamente y continúa vigente.
+    </div>
+
+  </td>
+</tr>
+
+<!-- ALERTA -->
+<tr>
+  <td style="padding:0 32px 12px 32px;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="background:#f59e0b; border-radius:12px;">
+
+      <tr>
+        <td style="padding:18px; text-align:center; color:#ffffff;">
+
+          <div style="font-size:28px; font-weight:700;">
+            Root Ya Entregado
+          </div>
+
+          <div style="font-size:16px; margin-top:8px;">
+            Existe una credencial activa para este equipo.
+          </div>
+
+        </td>
+      </tr>
+
+    </table>
+
+  </td>
+</tr>
+<!-- DATOS -->
+{% for root in roots_vigentes %}
+
+<tr>
+  <td style="padding:0 32px 0 32px;">
+
+    <table width="100%" cellpadding="10" cellspacing="0" border="0"
+           style="border-collapse:collapse; border:1px solid #e5e7eb; border-radius:8px;">
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold; width:30%; vertical-align:top;">
+          Equipo Solicitado
+        </td>
+        <td style="border-bottom:1px solid #e5e7eb;">
+          <b>{{ root.host }}</b> - {{ root.IP }}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold;">
+          Entorno
+        </td>
+        <td style="border-bottom:1px solid #e5e7eb;">
+          {{ entorno }}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold;">
+          Usuario que Recibió el Root
+        </td>
+        <td style="border-bottom:1px solid #e5e7eb;">
+          {{ root.usuario_solicitante }}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold;">
+          CRQ Asociada
+        </td>
+        <td style="border-bottom:1px solid #e5e7eb;">
+          {{ root.idhelix }}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold;">
+          Fecha de Entrega
+        </td>
+        <td style="border-bottom:1px solid #e5e7eb;">
+          {{ root.fecha_prestamo }}
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background:#f8fafc; font-weight:bold;">
+          Vigente Hasta
+        </td>
+        <td>
+          {{ root.fecha_expiracion_humana }}
+        </td>
+      </tr>
+
+    </table>
+
+  </td>
+</tr>
+
+<tr>
+  <td style="height:16px; line-height:16px;">&nbsp;</td>
+</tr>
+
+{% endfor %}
+  <!-- AVISO -->
+  <tr>
+    <td style="padding:0 32px 24px 32px;">
+<br>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"
+      style="background:#fff7ed; border:1px solid #fdba74; border-radius:10px;">
+<br>
+        <tr>
+          <td style="padding:16px; color:#9a3412; font-size:14px;">
+            <b>Importante:</b> No se generó una nueva contraseña ya que existe una credencial Root activa para estos equipos.
+          </td>
+        </tr>
+<br>
+      </table>
+<br>
+    </td>
+  </tr>
+<br>
+  <!-- FOOTER -->
+  <tr>
+    <td style="background-color:#f8fafc; padding:18px 32px; color:#64748b; font-size:12px; border-top:1px solid #e5e7eb;">
+      Correo generado automáticamente desde Ansible Automation Platform.<br>
+      La información fue obtenida del registro de credenciales temporales vigente.
+    </td>
+  </tr>
+<br>
+</table>
+<br>
+</td>
+</tr>
+</table>
+<br>
+</body>
+</html>
