@@ -15,5 +15,5 @@
       loop_control:
         loop_var: asbpbact2
       run_once: true
-      delegate_to: localhost
+  delegate_to: localhost
 
