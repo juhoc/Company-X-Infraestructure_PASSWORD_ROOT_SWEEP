@@ -1,19 +1,67 @@
 ---
-- block:
-    - name: Mostrar archivos a eliminar
-      debug:
-        var: archjsonexpdel
+- name: Bloque de evaluación nativa de candados por Epoch
+  block:
+    - name: Buscar todos los archivos de candado .json
+      find:
+        paths: "{{ directoriocandado }}"
+        patterns: "*.json"
+      register: candados_encontrados
 
-    - name: Mostrar servidores cuyos roots se renovaron
-      debug:
-        var: archjsonhtsdel
+    - name: Leer contenido de los candados existentes
+      slurp:
+        src: "{{ item.path }}"
+      loop: "{{ candados_encontrados.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+      register: candados_slurped
+      when: candados_encontrados.matched > 0
 
-    - name: Eliminar archivos de candado expirados
-      become: true
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop: "{{ archjsonexpdel }}"
-      when: archjsonexpdel | length > 0
-      delegate_to: "{{ servidorautomation }}"
-      run_once: true
+    - name: Filtrar archivos y hosts cuya fecha de expiracion se ha cumplido (Epoch)
+      vars:
+        epoch_actual: "{{ ansible_date_time.epoch | int }}"
+
+      set_fact:
+        archjsonexpdel: >-
+          [
+            {% for item in (candados_slurped.results | default([])) if item.content is defined %}
+              {% set data = item.content | b64decode | from_json %}
+              {% if (data.fecha_expiracion_epoch | default(0) | int) <= (epoch_actual | int) %}
+                "{{ item.source }}",
+              {% endif %}
+            {% endfor %}
+          ]
+        archjsonhtsdel: >-
+          {{
+            candados_slurped.results | default([])
+            | selectattr('content', 'defined')
+            | map(attribute='content')
+            | map('b64decode')
+            | map('from_json')
+            | selectattr('fecha_expiracion_epoch', 'defined')
+            | selectattr('fecha_expiracion_epoch', 'le', (epoch_actual | int))
+            | map(attribute='host')
+            | unique
+            | map('regex_replace', '$', '.*')
+            | join(' ')
+          }}
+  delegate_to: "{{ servidorautomation }}"
+  run_once: true
+
+# - block:
+#     - name: Mostrar archivos a eliminar
+#       debug:
+#         var: archjsonexpdel
+
+#     - name: Mostrar servidores cuyos roots se renovaron
+#       debug:
+#         var: archjsonhtsdel
+
+#     - name: Eliminar archivos de candado expirados
+#       become: true
+#       file:
+#         path: "{{ item }}"
+#         state: absent
+#       loop: "{{ archjsonexpdel }}"
+#       when: archjsonexpdel | length > 0
+#   delegate_to: "{{ servidorautomation }}"
+#   run_once: true
