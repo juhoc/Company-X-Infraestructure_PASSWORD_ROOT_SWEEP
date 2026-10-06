@@ -3,7 +3,7 @@
     - name: Definir enrutamiento según existencia de candados expirados
       set_fact:
         runplaybook: |
-          {% if (archjsonexpdel | length > 0) %}
+          {% if (archjsonexpdel | default([]) | length > 0) %}
           ['s10sendmailpwdsu']
           {% else %}
           ['s90msgprespwdsu']
