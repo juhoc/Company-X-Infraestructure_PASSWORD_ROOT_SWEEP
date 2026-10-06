@@ -1,34 +1,17 @@
 ---
 - block:
-    - name: Dividir contraseña
+    - name: Definir enrutamiento según existencia de candados expirados
       set_fact:
-        clave_parte_a: "{{ claveplana[:((claveplana | length) // 2)] }}"
-        clave_parte_b: "{{ claveplana[((claveplana | length) // 2):] }}"
+        runplaybook: |
+          {% if (archjsonexpdel | length > 0) %}
+          ['s10sendmailpwdsu']
+          {% else %}
+          ['s90msgprespwdsu']
+          {% endif %}
 
-    - name: Enviar correo Parte A
-      mail:
-        host: 192.168.0.245
-        port: 25
-        from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
-        subject: "[Entrega Automatica de Roots] Parte A de Credencial Root"
-        to: "{{ to }}"
-        subtype: html
-        charset: utf8
-        body: "{{ lookup('template', 'entrega_de_root_lado_a.html.j2') }}"
-      delegate_to: "{{ servidorautomation }}"
+    - name: Validar condicion para borrar archivos json exprirados 
+      include_tasks: "{{ asbpbact2 }}.yml"
+      loop: "{{ runplaybook }}"
+      loop_control:
+        loop_var: asbpbact2
 
-    - name: Esperar 2 minutos antes de enviar Correo B
-      pause:
-        seconds: 5
-
-    - name: Enviar correo Parte B
-      mail:
-        host: 192.168.0.245
-        port: 25
-        from: "AUTOMATION CENTER <automationcenter.io.mx@company-x.ldn>"
-        subject: "[Entrega Automatica de Roots] Parte B de Credencial Root"
-        to: "{{ to }}"
-        subtype: html
-        charset: utf8
-        body: "{{ lookup('template', 'entrega_de_root_lado_b.html.j2') }}"
-      delegate_to: "{{ servidorautomation }}"
