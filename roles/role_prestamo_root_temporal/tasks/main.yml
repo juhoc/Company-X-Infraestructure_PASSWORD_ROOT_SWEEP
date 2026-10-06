@@ -29,6 +29,11 @@
       loop_control:
         loop_var: asbpbact
 
+
+    - name: El debuger
+      debug:
+        msg: "{{ archjsonexpdel }}"
+
     # - name: Definir enrutamiento según existencia de candados expirados
     #   set_fact:
     #     runplaybook: |
