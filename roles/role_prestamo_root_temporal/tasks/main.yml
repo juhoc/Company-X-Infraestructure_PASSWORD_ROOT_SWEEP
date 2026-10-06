@@ -8,7 +8,7 @@
           {% elif actions == 'Barredora prestamo de password roots' and servidorautomation not in ansible_play_hosts %}
           ['s91msgprespwdsu']
           {% elif actions in ['Renovar password root'] %}
-          ['s3genpwdrdmsu','s4setpwd{{ plataforma }}su'.'s1borrajsonexp']
+          ['s3genpwdrdmsu','s4setpwd{{ plataforma }}su','s1borrajsonexp']
           {% else %}
           ['No selecciono ninguna tarea', 'No_selecciono_ninguna_tarea']
           {% endif %}
