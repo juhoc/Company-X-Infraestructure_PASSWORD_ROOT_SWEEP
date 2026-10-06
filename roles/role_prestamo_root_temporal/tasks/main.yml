@@ -33,7 +33,13 @@
       set_fact:
         runplaybook: |
           {% if (archjsonexpdel | length > 0) %}
-          se_envia_correo
+          ['s9genreppwdsu']
           {% else %}
-          no_hay_arcnivos_json
+          ['s90msgprespwdsu']
           {% endif %}
+
+    - name: Validar condicion para borrar archivos json exprirados 
+      include_tasks: "{{ asbpbact2 }}.yml"
+      loop: "{{ runplaybook }}"
+      loop_control:
+        loop_var: asbpbact2
